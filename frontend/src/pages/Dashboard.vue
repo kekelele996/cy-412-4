@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import * as echarts from 'echarts';
 import StatCard from '../components/common/StatCard.vue';
 import RepairStatusBadge from '../components/common/RepairStatusBadge.vue';
@@ -7,19 +7,23 @@ import AnnouncementCard from '../components/common/AnnouncementCard.vue';
 import EmptyState from '../components/common/EmptyState.vue';
 import { useRepairStore } from '../stores/repairStore';
 import { usePaymentStore } from '../stores/paymentStore';
-import { listAnnouncements, markAnnouncementRead } from '../api/announcement';
+import { useAnnouncementStore } from '../stores/announcementStore';
 import { useRepairStats } from '../hooks/useRepairStats';
-import type { Announcement } from '../types/announcement';
 
 const repairStore = useRepairStore();
 const paymentStore = usePaymentStore();
-const announcements = ref<Announcement[]>([]);
+const announcementStore = useAnnouncementStore();
 const chartEl = ref<HTMLDivElement | null>(null);
 const repairStats = useRepairStats(ref(repairStore.repairs));
 
+const recentAnnouncements = computed(() => announcementStore.announcements.slice(0, 3));
+
 async function refresh() {
-  await Promise.all([repairStore.fetchRepairs(), paymentStore.fetchPayments()]);
-  announcements.value = await listAnnouncements();
+  await Promise.all([
+    repairStore.fetchRepairs(),
+    paymentStore.fetchPayments(),
+    announcementStore.fetchAnnouncements(),
+  ]);
 }
 
 function renderChart() {
@@ -44,8 +48,7 @@ function renderChart() {
 }
 
 async function readAnnouncement(id: number) {
-  await markAnnouncementRead(id);
-  announcements.value = await listAnnouncements();
+  await announcementStore.read(id);
 }
 
 onMounted(async () => {
@@ -62,7 +65,7 @@ watch(() => repairStore.repairs.length, renderChart);
       <StatCard label="待分配工单" :value="repairStats.pending" hint="需物业派单" tone="amber" />
       <StatCard label="处理中工单" :value="repairStats.processing" hint="含已分配" tone="blue" />
       <StatCard label="本月待收" :value="`¥${paymentStore.unpaidAmount.toFixed(2)}`" hint="支付宝沙箱模拟" tone="green" />
-      <StatCard label="公告阅读" :value="announcements.reduce((sum, item) => sum + item.readCount, 0)" hint="累计阅读数" tone="red" />
+      <StatCard label="公告阅读" :value="announcementStore.announcements.reduce((sum, item) => sum + item.readCount, 0)" hint="累计阅读数" tone="red" />
     </div>
 
     <div class="page-grid two-col">
@@ -84,9 +87,9 @@ watch(() => repairStore.repairs.length, renderChart);
         <div class="section-title">
           <h2>最新公告</h2>
         </div>
-        <div v-if="announcements.length" class="list-stack">
+        <div v-if="recentAnnouncements.length" class="list-stack">
           <AnnouncementCard
-            v-for="announcement in announcements.slice(0, 3)"
+            v-for="announcement in recentAnnouncements"
             :key="announcement.id"
             :announcement="announcement"
             @read="readAnnouncement"

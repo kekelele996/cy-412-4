@@ -8,4 +8,5 @@ public class AnnouncementRequest {
     private String content;
     private String category;
     private Boolean top;
+    private String buildings;
 }

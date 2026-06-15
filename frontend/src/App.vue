@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { House, Bell, CreditCard, DataAnalysis, User, Tools } from '@element-plus/icons-vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from './stores/authStore';
+import { useAnnouncementStore } from './stores/announcementStore';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const announcementStore = useAnnouncementStore();
 
 const navItems = [
   { path: '/dashboard', label: '工作台', icon: DataAnalysis },
@@ -17,6 +19,17 @@ const navItems = [
 ];
 
 const activePath = computed(() => route.path);
+const unreadCount = computed(() => announcementStore.unreadCount);
+
+watch(() => route.path, (newPath) => {
+  if (newPath === '/announcements' || newPath === '/dashboard') {
+    announcementStore.fetchUnreadCount();
+  }
+});
+
+onMounted(() => {
+  announcementStore.fetchUnreadCount();
+});
 </script>
 
 <template>
@@ -31,7 +44,10 @@ const activePath = computed(() => route.path);
       </div>
       <el-menu :default-active="activePath" router class="nav-menu">
         <el-menu-item v-for="item in navItems" :key="item.path" :index="item.path">
-          <el-icon><component :is="item.icon" /></el-icon>
+          <el-badge v-if="item.path === '/announcements' && unreadCount > 0" :value="unreadCount" :max="99" class="nav-badge">
+            <el-icon><component :is="item.icon" /></el-icon>
+          </el-badge>
+          <el-icon v-else><component :is="item.icon" /></el-icon>
           <span>{{ item.label }}</span>
         </el-menu-item>
       </el-menu>

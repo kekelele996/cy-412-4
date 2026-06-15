@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -86,5 +87,19 @@ public class UserServiceImpl implements UserService {
         List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>().in(User::getRole, UserConstants.STAFF, UserConstants.ADMIN));
         users.forEach(user -> user.setPasswordHash(null));
         return users;
+    }
+
+    @Override
+    public List<String> buildings(String role) {
+        LogUtil.info(LogTemplates.USER_BUILDING_LIST, role);
+        List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>()
+                .isNotNull(User::getBuilding)
+                .ne(User::getBuilding, ""));
+        return users.stream()
+                .map(User::getBuilding)
+                .filter(building -> !"物业中心".equals(building))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

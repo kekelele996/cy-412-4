@@ -5,3 +5,4 @@ export const login = (data: LoginRequest) => request.post<never, LoginResponse>(
 export const getProfile = () => request.get<never, User>('/users/profile');
 export const updateProfile = (data: Partial<User>) => request.put<never, User>('/users/profile', data);
 export const listStaff = () => request.get<never, User[]>('/users/staff');
+export const listBuildings = () => request.get<never, string[]>('/users/buildings');

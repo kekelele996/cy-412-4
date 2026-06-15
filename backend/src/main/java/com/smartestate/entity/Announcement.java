@@ -20,7 +20,11 @@ public class Announcement {
     private LocalDateTime publishAt;
     private Boolean top;
     private Integer readCount;
+    private String buildings;
 
     @TableField(exist = false)
     private User publisher;
+
+    @TableField(exist = false)
+    private Boolean read;
 }

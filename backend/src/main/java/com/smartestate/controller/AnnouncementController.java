@@ -27,9 +27,17 @@ public class AnnouncementController {
 
     @GetMapping
     public Result<List<Announcement>> list(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute(Constants.CURRENT_USER_ID);
         String role = (String) request.getAttribute(Constants.CURRENT_USER_ROLE);
         LogUtil.info("AnnouncementController list role=%s", role);
-        return Result.ok(announcementService.list(role));
+        return Result.ok(announcementService.list(userId, role));
+    }
+
+    @GetMapping("/unread-count")
+    public Result<Integer> unreadCount(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute(Constants.CURRENT_USER_ID);
+        String role = (String) request.getAttribute(Constants.CURRENT_USER_ROLE);
+        return Result.ok(announcementService.unreadCount(userId, role));
     }
 
     @PostMapping

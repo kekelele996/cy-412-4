@@ -45,4 +45,10 @@ public class UserController {
         String role = (String) request.getAttribute(Constants.CURRENT_USER_ROLE);
         return Result.ok(userService.staff(role));
     }
+
+    @GetMapping("/buildings")
+    public Result<List<String>> buildings(HttpServletRequest request) {
+        String role = (String) request.getAttribute(Constants.CURRENT_USER_ROLE);
+        return Result.ok(userService.buildings(role));
+    }
 }

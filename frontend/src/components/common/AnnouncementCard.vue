@@ -7,10 +7,14 @@ defineEmits<{ read: [id: number] }>();
 </script>
 
 <template>
-  <article class="announcement-card" @click="$emit('read', announcement.id)">
+  <article class="announcement-card" :class="{ 'is-unread': !announcement.read }" @click="$emit('read', announcement.id)">
     <div class="announcement-card__head">
-      <CategoryTag :category="announcement.category" />
-      <el-tag v-if="announcement.top" type="danger" effect="plain">置顶</el-tag>
+      <div class="announcement-card__tags">
+        <span v-if="!announcement.read" class="unread-dot"></span>
+        <CategoryTag :category="announcement.category" />
+        <el-tag v-if="announcement.top" type="danger" effect="plain">置顶</el-tag>
+        <el-tag v-if="announcement.buildings" type="warning" effect="light">{{ announcement.buildings }} 定向</el-tag>
+      </div>
     </div>
     <h3>{{ announcement.title }}</h3>
     <p>{{ announcement.content }}</p>
@@ -25,6 +29,17 @@ defineEmits<{ read: [id: number] }>();
   border-radius: 8px;
   border: 1px solid #dfe7d8;
   background: #fff;
+  transition: all 0.2s;
+}
+
+.announcement-card:hover {
+  border-color: #b8c9a8;
+  box-shadow: 0 2px 8px rgba(69, 98, 79, 0.08);
+}
+
+.announcement-card.is-unread {
+  background: #f7faf4;
+  border-color: #c8d9bc;
 }
 
 .announcement-card__head {
@@ -32,9 +47,27 @@ defineEmits<{ read: [id: number] }>();
   justify-content: space-between;
 }
 
+.announcement-card__tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e74c3c;
+  flex-shrink: 0;
+}
+
 .announcement-card h3 {
   margin: 12px 0 8px;
   font-size: 17px;
+}
+
+.announcement-card.is-unread h3 {
+  font-weight: 600;
 }
 
 .announcement-card p {

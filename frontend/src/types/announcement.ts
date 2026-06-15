@@ -11,5 +11,7 @@ export interface Announcement {
   publishAt: string;
   top: boolean;
   readCount: number;
+  buildings?: string;
+  read: boolean;
   publisher?: User;
 }

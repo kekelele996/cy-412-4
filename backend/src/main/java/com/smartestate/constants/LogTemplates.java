@@ -6,6 +6,7 @@ public final class LogTemplates {
     public static final String USER_PROFILE_READ = "User[id=%s] read profile: role=%s";
     public static final String USER_PROFILE_UPDATE = "User[id=%s] update profile: field=%s role=%s";
     public static final String USER_STAFF_LIST = "User[role=staff] list fetched by role=%s";
+    public static final String USER_BUILDING_LIST = "User[building list] fetched by role=%s";
     public static final String REPAIR_LIST = "Repair[status=%s] list fetched by role=%s";
     public static final String REPAIR_CREATE = "Repair[id=%s] created: status=pending role=%s";
     public static final String REPAIR_ASSIGN = "Repair[id=%s] assigned: handler_id=%s role=%s";

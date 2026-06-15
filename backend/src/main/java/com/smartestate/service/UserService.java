@@ -12,4 +12,5 @@ public interface UserService {
     User profile(Long userId, String role);
     User updateProfile(Long userId, String role, ProfileUpdateRequest request);
     List<User> staff(String role);
+    List<String> buildings(String role);
 }

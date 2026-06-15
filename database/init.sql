@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS announcements (
   publish_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   top TINYINT(1) NOT NULL DEFAULT 0,
   read_count INT NOT NULL DEFAULT 0,
+  buildings VARCHAR(255) DEFAULT NULL,
   CONSTRAINT fk_announcements_publisher FOREIGN KEY (publisher_id) REFERENCES users(id),
   INDEX idx_announcements_top_publish (top, publish_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -170,8 +171,9 @@ INSERT INTO payments(id, user_id, fee_type, amount, month, status, paid_at) VALU
 (3, 3, 'utilities', 168.50, '2026-05', 'paid', '2026-05-28 18:00:00')
 ON DUPLICATE KEY UPDATE amount = VALUES(amount), status = VALUES(status);
 
-INSERT INTO announcements(id, title, content, category, publisher_id, publish_at, top, read_count) VALUES
-(1, '暴雨天气地下车库巡检安排', '6月15日晚间物业将加强排水设备巡检，请车主留意车库广播。', 'urgent', 2, '2026-06-15 09:30:00', 1, 42),
-(2, '端午社区便民服务开放预约', '本周六开放家电清洗、磨刀、义诊服务，业主可在物业前台预约。', 'event', 2, '2026-06-12 14:00:00', 0, 128),
-(3, '6月公共区域消杀通知', '6月18日9:00-11:30进行楼道及地库消杀，请提前收好门口物品。', 'notice', 2, '2026-06-10 08:40:00', 0, 87)
-ON DUPLICATE KEY UPDATE title = VALUES(title), top = VALUES(top);
+INSERT INTO announcements(id, title, content, category, publisher_id, publish_at, top, read_count, buildings) VALUES
+(1, '暴雨天气地下车库巡检安排', '6月15日晚间物业将加强排水设备巡检，请车主留意车库广播。', 'urgent', 2, '2026-06-15 09:30:00', 1, 42, NULL),
+(2, '端午社区便民服务开放预约', '本周六开放家电清洗、磨刀、义诊服务，业主可在物业前台预约。', 'event', 2, '2026-06-12 14:00:00', 0, 128, NULL),
+(3, '6月公共区域消杀通知', '6月18日9:00-11:30进行楼道及地库消杀，请提前收好门口物品。', 'notice', 2, '2026-06-10 08:40:00', 0, 87, NULL),
+(4, '8栋电梯维保通知', '8栋2号电梯将于6月16日上午进行例行维保，预计耗时2小时，请使用1号电梯。', 'notice', 2, '2026-06-14 10:00:00', 0, 15, '8栋')
+ON DUPLICATE KEY UPDATE title = VALUES(title), top = VALUES(top), buildings = VALUES(buildings);
